@@ -37,7 +37,6 @@ export default function App() {
   const [currentSesiId, setCurrentSesiId] = useState<string>('sesi1');
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Flashcards state
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
