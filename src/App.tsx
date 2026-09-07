@@ -3,389 +3,400 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import { BookOpen, HelpCircle, Layers, Menu, X, RefreshCw, Award } from 'lucide-react';
 
-interface QuizItem {
-  id: number;
-  question: string;
-  options: string[];
-  answer: number;
-  explanation: string;
+interface ModuleSesi {
+  id: string;
+  title: string;
+  subtitle: string;
+  file: string;
+  duration: string;
+  tag: string;
 }
 
-interface FlashcardItem {
-  id: number;
-  front: string;
-  back: string;
-  category: string;
-}
-
-const quizData: Record<string, QuizItem[]> = {
-  sesi1: [
-    {
-      id: 1,
-      question: "Apa syarat utama suatu prosedur dapat dikategorikan sebagai algoritma yang valid?",
-      options: [
-        "Harus ditulis menggunakan bahasa pemrograman Java/C++",
-        "Harus terdefinisi secara presisi, tidak ambigu, dan berhenti setelah langkah terhingga",
-        "Harus memiliki kompleksitas waktu O(1)",
-        "Harus berjalan di atas arsitektur GPU"
-      ],
-      answer: 1,
-      explanation: "Algoritma wajib welldefined (langkah jelas/tidak ambigu) dan memiliki sifat finiteness (pasti berhenti dalam waktu/langkah terhingga)."
-    },
-    {
-      id: 2,
-      question: "Manakah kriteria pengurutan (Sorting Criteria) yang memastikan urutan elemen dengan kunci sama tidak berubah?",
-      options: ["Correctness", "Stability", "Efficiency", "In-Place"],
-      answer: 1,
-      explanation: "Stability (Pengurutan Stabil) menjaga urutan relatif awal dari dua elemen yang memiliki kunci (key) bernilai sama."
-    },
-    {
-      id: 3,
-      question: "Persyaratan wajib mata kuliah ADA terkait kompetisi di BINUS University adalah minimal berpartisipasi dalam...",
-      options: ["ICPC World Finals", "INC (Indonesia National Contest)", "Gemastik Final", "Codeforces Grand Prix"],
-      answer: 1,
-      explanation: "Berdasarkan slide Sesi 1, partisipasi minimal INC (Indonesia National Contest) atau kompetisi sejenis adalah syarat AoL/kelulusan ADA."
-    }
-  ],
-  sesi2: [
-    {
-      id: 1,
-      question: "Langkah awal dalam Induksi Matematika untuk membuktikan P(n) benar adalah...",
-      options: ["Inductive Step P(k) -> P(k+1)", "Base Case (membuktikan P(1) atau P(initial) benar)", "Recursion Tree", "Master Theorem"],
-      answer: 1,
-      explanation: "Base Case adalah langkah pertama wajib di mana kita membuktikan pernyataan dasar P(initial) bernilai benar."
-    },
-    {
-      id: 2,
-      question: "Apa bahaya utama dari fungsi rekursif tanpa kondisi berhenti (base case) yang valid?",
-      options: ["Compiler Error", "Stack Overflow Error", "Memory Leak pada Disk", "Syntax Error"],
-      answer: 1,
-      explanation: "Tanpa base case, fungsi akan memanggil dirinya sendiri tanpa akhir hingga memori Call Stack penuh dan menyebabkan Stack Overflow."
-    },
-    {
-      id: 3,
-      question: "Berapakah hasil dari rumus sumasi kuadrat ∑_{i=1}^n i^2?",
-      options: ["n(n+1)/2", "n(n+1)(2n+1)/6", "[n(n+1)/2]^2", "2^n - 1"],
-      answer: 1,
-      explanation: "Rumus umum jumlah kuadrat n bilangan bulat positif pertama adalah n(n+1)(2n+1)/6."
-    }
-  ]
-};
-
-const flashcardsData: Record<string, FlashcardItem[]> = {
-  sesi1: [
-    { id: 1, front: "Definisi Algoritma", back: "Urutan langkah komputasi terdefinisi secara presisi yang mengambil input dan menghasilkan output terhingga.", category: "Teori Dasar" },
-    { id: 2, front: "Correctness (Kebenaran Algoritma)", back: "Algoritma dikatakan correct jika untuk setiap instance input valid, algoritma berhenti dan memberikan output yang tepat.", category: "Properti" },
-    { id: 3, front: "Stability pada Sorting", back: "Sifat sorting di mana elemen dengan nilai kunci sama mempertahankan urutan relatifnya seperti pada input asal.", category: "Sorting" },
-    { id: 4, front: "Algorithms as Technology", back: "Pemahaman bahwa efisiensi algoritma sama pentingnya dengan kecepatan hardware/sistem operasi.", category: "Konsep" }
-  ],
-  sesi2: [
-    { id: 1, front: "Base Case (Induksi/Rekursi)", back: "Kondisi awal/terdasar yang membuktikan nilai dasar dan menghentikan pemanggilan rekursif berulang.", category: "Induksi & Rekursi" },
-    { id: 2, front: "Inductive Hypothesis", back: "Asumsi bahwa pernyataan P(k) bernilai benar untuk suatu k ≥ base case.", category: "Induksi Matematika" },
-    { id: 3, front: "Call Stack Memory", back: "Struktur data LIFO pada RAM tempat menyimpan stack frame (parameter, variabel lokal, return address) dari setiap pemanggilan fungsi.", category: "Arsitektur Execution" },
-    { id: 4, front: "Pass by Value vs Pass by Reference", back: "Pass by Value mengirim salinan nilai (asal tidak berubah), Pass by Reference mengirim alamat memori (asal ikut berubah).", category: "Pemrograman" }
-  ]
-};
+const SESI_LIST: ModuleSesi[] = [
+  {
+    id: 'sesi1',
+    title: 'Sesi 01: Algoritma & Kompleksitas',
+    subtitle: 'Role of Algorithms, Correctness, Pseudocode & Complexity',
+    file: '/ada-study-module/content/sesi1.md',
+    duration: '2 Jam Belajar',
+    tag: 'Dasar Algoritma'
+  },
+  {
+    id: 'sesi2',
+    title: 'Sesi 02: Analisis Matematis & Rekursi',
+    subtitle: 'Induksi Matematika, Deret Summations & Recurrence',
+    file: '/ada-study-module/content/sesi2.md',
+    duration: '2.5 Jam Belajar',
+    tag: 'Math & Rekursi'
+  }
+];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'sesi1' | 'sesi2'>('sesi1');
-  const [activeView, setActiveView] = useState<'materi' | 'quiz' | 'flashcards'>('materi');
-  const [content, setContent] = useState<Record<string, string>>({ sesi1: '', sesi2: '' });
+  const [activeTab, setActiveTab] = useState<'material' | 'flashcards' | 'quiz'>('material');
+  const [currentSesiId, setCurrentSesiId] = useState<string>('sesi1');
+  const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-
-  // Quiz state
-  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
-  const [showQuizResults, setShowQuizResults] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Flashcards state
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
-  // Sidebar mobile
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  // Quiz state
+  const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
+  const [submittedQuiz, setSubmittedQuiz] = useState<boolean>(false);
+
+  const activeSesi = SESI_LIST.find(s => s.id === currentSesiId) || SESI_LIST[0];
 
   useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-        const res1 = await fetch(`${basePath}content/sesi1.md`);
-        const text1 = await res1.text();
-        const res2 = await fetch(`${basePath}content/sesi2.md`);
-        const text2 = await res2.text();
-        setContent({ sesi1: text1, sesi2: text2 });
-      } catch (err) {
-        console.error("Error loading markdown:", err);
-      } finally {
+    setLoading(true);
+    fetch(activeSesi.file)
+      .then(res => res.text())
+      .then(text => {
+        setMarkdownContent(text);
         setLoading(false);
-      }
-    };
-    fetchContent();
-  }, []);
+      })
+      .catch(err => {
+        console.error('Failed to load markdown', err);
+        setMarkdownContent('# Gagal memuat materi\nSilakan coba lagi nanti.');
+        setLoading(false);
+      });
+  }, [currentSesiId]);
 
-  const currentQuiz = quizData[activeTab] || [];
-  const currentFlashcards = flashcardsData[activeTab] || [];
+  // Sample Flashcards & Quiz Data based on Session
+  const flashcardsData = currentSesiId === 'sesi1' ? [
+    { q: "Apa definisi Algoritma menurut Sesi 1?", a: "Prosedur komputasi terspesifikasi yang mengambil input dan menghasilkan output yang tepat." },
+    { q: "Apa bedanya Loop Invariant dengan Induksi Matematika?", a: "Loop Invariant membuktikan kebenaran algoritma iteratif pada tiap iterasi, Induksi untuk membuktikan rumus/rekursi." },
+    { q: "Mengapa Big-O mengabaikan konstanta dan suku bernilai rendah?", a: "Karena pada ukuran input n -> infinity (asymptotic), suku berpangkat tertinggi yang mendominasi pertumbuhan waktu." },
+    { q: "Apa kompleksitas waktu dari Insertion Sort pada Worst Case?", a: "O(n^2) ketika array terurut terbalik (reverse sorted)." },
+    { q: "Apa kondisi Best Case untuk Insertion Sort?", a: "O(n) ketika array sudah terurut sempurna." }
+  ] : [
+    { q: "Apa 2 langkah utama dalam Induksi Matematika?", a: "1. Basis Step (buktikan n=1), 2. Inductive Step (asumsi n=k benar, buktikan n=k+1 benar)." },
+    { q: "Berapakah hasil dari rumus deret kuadrat sum_(i=1)^n i^2 ?", a: "n(n+1)(2n+1) / 6" },
+    { q: "Apa komparasi memori antara Faktorial Rekursif vs Iteratif?", a: "Rekursif memakan memori Stack O(n), sedangkan Iteratif hanya butuh memori O(1)." },
+    { q: "Apa risiko utama dari rekursi tanpa Base Case yang benar?", a: "Stack Overflow Error karena stack frame terus bertambah tanpa batas." }
+  ];
 
-  const handleQuizSelect = (qId: number, optionIdx: number) => {
-    if (showQuizResults) return;
-    setQuizAnswers(prev => ({ ...prev, [qId]: optionIdx }));
+  const quizData = currentSesiId === 'sesi1' ? [
+    {
+      question: "Mengapa kompleksitas Insertion Sort pada Average Case tetap O(n^2)?",
+      options: [
+        "Karena tetap melakukan pergantian elemen sebanyak n kali di tiap iterasi",
+        "Rata-rata elemen yang diperiksa adalah n/2, sehingga 1/2 * n^2 masih dalam orde O(n^2)",
+        "Karena memori tambahan yang digunakan berkembang secara kuadratik",
+        "Karena tidak ada perbandingan yang dilakukan"
+      ],
+      correct: 1,
+      explanation: "Secara rata-rata kita memeriksa separuh subarray terurut (n/2). Konstanta 1/2 diabaikan dalam notasi Big-O, sehingga tetap O(n^2)."
+    },
+    {
+      question: "Syarat utama agar sebuah algoritma dikatakan Correct adalah...",
+      options: [
+        "Berhenti untuk sebagian besar input",
+        "Menghasilkan output yang tepat dan selalu berhenti (halting) untuk semua masukan sah",
+        "Memiliki kompleksitas waktu O(1)",
+        "Dapat ditulis kurang dari 10 baris pseudocode"
+      ],
+      correct: 1,
+      explanation: "Algoritma correct harus berhenti (halt) untuk setiap instance input dan memberikan jawaban tepat sesuai spesifikasi."
+    }
+  ] : [
+    {
+      question: "Pada pembuktian Induksi Matematika sum_(i=1)^n i = n(n+1)/2, pada Inductive Step kita harus membuktikan untuk...",
+      options: [
+        "n = k",
+        "n = 1",
+        "n = k + 1",
+        "n = 2k"
+      ],
+      correct: 2,
+      explanation: "Setelah mengasumsikan P(k) benar, langkah induksi wajib membuktikan P(k+1) benar menggunakan hipotesis P(k)."
+    },
+    {
+      question: "Penggunaan memori Call Stack pada fungsi faktorial rekursif factorial(n) adalah...",
+      options: [
+        "O(1)",
+        "O(log n)",
+        "O(n)",
+        "O(n^2)"
+      ],
+      correct: 2,
+      explanation: "Tiap pemanggilan rekursif factorial(k) menumpuk 1 stack frame hingga n kedalaman, sehingga memori membesar secara linier O(n)."
+    }
+  ];
+
+  const handleQuizOptionSelect = (qIdx: number, optIdx: number) => {
+    if (submittedQuiz) return;
+    setQuizAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
   };
 
-  const calculateScore = () => {
+  const calculateQuizScore = () => {
     let score = 0;
-    currentQuiz.forEach(q => {
-      if (quizAnswers[q.id] === q.answer) score += 1;
+    quizData.forEach((q, idx) => {
+      if (quizAnswers[idx] === q.correct) score++;
     });
-    return Math.round((score / currentQuiz.length) * 100);
+    return score;
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
-      {/* Header Bar */}
-      <header className="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200"
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-            <div className="flex items-center space-x-2">
-              <div className="bg-indigo-600 text-white p-2 rounded-lg font-bold">ADA</div>
-              <div>
-                <h1 className="font-bold text-lg leading-tight">COMP6049 - Algorithm Design and Analysis</h1>
-                <p className="text-xs text-slate-400">BINUS University • Modul Interaktif Sesi 01 & 02</p>
-              </div>
-            </div>
+    <div className="min-h-screen bg-[#08090a] text-[#f7f8f8] flex flex-col font-sans selection:bg-[#5e6ad2] selection:text-white">
+      {/* Top Header Navigation */}
+      <header className="sticky top-0 z-50 bg-[#0f1011]/80 backdrop-blur-md border-b border-white/[0.08] px-4 lg:px-8 py-3.5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#5e6ad2] to-[#828fff] flex items-center justify-center font-bold text-white shadow-lg shadow-[#5e6ad2]/20">
+            A
           </div>
+          <div>
+            <h1 className="text-sm font-semibold tracking-tight text-[#f7f8f8] flex items-center gap-2">
+              ADA Study Module
+              <span className="text-[10px] font-mono bg-[#7170ff]/15 text-[#828fff] px-2 py-0.5 rounded-full border border-[#7170ff]/30">
+                COMP6049
+              </span>
+            </h1>
+            <p className="text-xs text-[#8a8f98]">Algorithm Design & Analysis • BINUS</p>
+          </div>
+        </div>
 
-          <div className="hidden md:flex items-center space-x-2 bg-slate-900/60 p-1 rounded-xl border border-slate-700">
-            <button
-              onClick={() => { setActiveTab('sesi1'); setQuizAnswers({}); setShowQuizResults(false); setCurrentCardIndex(0); }}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'sesi1' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
-            >
-              Sesi 01: Role of Algorithms
-            </button>
-            <button
-              onClick={() => { setActiveTab('sesi2'); setQuizAnswers({}); setShowQuizResults(false); setCurrentCardIndex(0); }}
-              className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'sesi2' ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
-            >
-              Sesi 02: Math Induction & Recursion
-            </button>
-          </div>
+        {/* Action Tabs */}
+        <div className="flex items-center gap-1 bg-[#191a1b] p-1 rounded-lg border border-white/[0.06]">
+          <button
+            onClick={() => setActiveTab('material')}
+            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+              activeTab === 'material'
+                ? 'bg-[#5e6ad2] text-white shadow-sm'
+                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+            }`}
+          >
+            📖 Materi Lecture
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('flashcards');
+              setCurrentCardIndex(0);
+              setIsFlipped(false);
+            }}
+            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+              activeTab === 'flashcards'
+                ? 'bg-[#5e6ad2] text-white shadow-sm'
+                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+            }`}
+          >
+            🎴 Flashcards
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('quiz');
+              setSubmittedQuiz(false);
+              setQuizAnswers({});
+            }}
+            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+              activeTab === 'quiz'
+                ? 'bg-[#5e6ad2] text-white shadow-sm'
+                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+            }`}
+          >
+            🧠 Interactive Quiz
+          </button>
         </div>
       </header>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-800 border-b border-slate-700 p-4 space-y-2">
-          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Pilih Sesi Materi</div>
-          <button
-            onClick={() => { setActiveTab('sesi1'); setMobileMenuOpen(false); setQuizAnswers({}); setShowQuizResults(false); }}
-            className={`w-full text-left px-4 py-2.5 rounded-lg font-medium text-sm ${activeTab === 'sesi1' ? 'bg-indigo-600 text-white' : 'bg-slate-700/50 text-slate-300'}`}
-          >
-            Sesi 01: Peran Algoritma dalam Pemrograman
-          </button>
-          <button
-            onClick={() => { setActiveTab('sesi2'); setMobileMenuOpen(false); setQuizAnswers({}); setShowQuizResults(false); }}
-            className={`w-full text-left px-4 py-2.5 rounded-lg font-medium text-sm ${activeTab === 'sesi2' ? 'bg-indigo-600 text-white' : 'bg-slate-700/50 text-slate-300'}`}
-          >
-            Sesi 02: Induksi Matematika & Fungsi Rekursif
-          </button>
-        </div>
-      )}
-
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Sidebar Nav View */}
-        <aside className="md:col-span-1 space-y-4">
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-4 shadow-sm">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Mode Pembelajaran</h2>
-            <nav className="space-y-1">
-              <button
-                onClick={() => setActiveView('materi')}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeView === 'materi' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-700/50'}`}
-              >
-                <BookOpen size={18} />
-                <span>Modul Bacaan Utuh</span>
-              </button>
-              <button
-                onClick={() => setActiveView('flashcards')}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeView === 'flashcards' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-700/50'}`}
-              >
-                <Layers size={18} />
-                <span>Kartu Kilat (Flashcards)</span>
-              </button>
-              <button
-                onClick={() => setActiveView('quiz')}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeView === 'quiz' ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-700/50'}`}
-              >
-                <HelpCircle size={18} />
-                <span>Uji Kuis Interaktif</span>
-              </button>
-            </nav>
+      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 lg:px-6 py-6 gap-6">
+        {/* Sidebar Session Selector */}
+        <aside className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
+          <div className="linear-card p-4">
+            <h2 className="text-xs font-mono uppercase tracking-wider text-[#8a8f98] mb-3">
+              Daftar Modul Sesi
+            </h2>
+            <div className="flex flex-col gap-2">
+              {SESI_LIST.map(sesi => (
+                <button
+                  key={sesi.id}
+                  onClick={() => setCurrentSesiId(sesi.id)}
+                  className={`text-left p-3 rounded-lg border transition-all flex flex-col gap-1 ${
+                    currentSesiId === sesi.id
+                      ? 'bg-[#5e6ad2]/15 border-[#7170ff]/40 text-white shadow-inner'
+                      : 'bg-white/[0.01] border-white/[0.05] text-[#8a8f98] hover:bg-white/[0.03] hover:text-[#f7f8f8]'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-[#828fff]">{sesi.tag}</span>
+                    <span className="text-[10px] text-[#62666d]">{sesi.duration}</span>
+                  </div>
+                  <h3 className="text-sm font-medium text-[#f7f8f8] leading-snug">{sesi.title}</h3>
+                  <p className="text-xs text-[#8a8f98] line-clamp-1">{sesi.subtitle}</p>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="bg-slate-800/60 border border-slate-700/80 rounded-xl p-4 text-xs space-y-2">
-            <div className="font-semibold text-slate-300">Standar Pedagogi:</div>
-            <ul className="list-disc list-inside text-slate-400 space-y-1">
-              <li>100% Zero-Loss Slide Content</li>
-              <li>Explanatory Deep Expansion</li>
-              <li>LaTeX Mathematical Proofs</li>
-              <li>Call Stack Step Execution</li>
-            </ul>
+          {/* Quick Info Box */}
+          <div className="linear-card p-4 space-y-2">
+            <h3 className="text-xs font-mono uppercase tracking-wider text-[#8a8f98]">💡 Pedoman Studi</h3>
+            <p className="text-xs text-[#8a8f98] leading-relaxed">
+              Modul ini disusun dengan pendekatan intuisi formal, pembuktian matematis, trace call-stack, serta kuis interaktif.
+            </p>
           </div>
         </aside>
 
-        {/* Main Content Area */}
-        <main className="md:col-span-3">
-          {loading ? (
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-12 text-center text-slate-400">
-              <RefreshCw className="animate-spin mx-auto mb-3" size={28} />
-              Memuat modul materi akademik...
-            </div>
-          ) : (
-            <>
-              {/* VIEW 1: MATERI UTUH MARKDOWN */}
-              {activeView === 'materi' && (
-                <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 md:p-8 shadow-sm space-y-6">
-                  <article className="prose prose-invert max-w-none prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-700 prose-headings:text-indigo-300 prose-a:text-indigo-400">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm, remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
-                    >
-                      {content[activeTab]}
-                    </ReactMarkdown>
-                  </article>
+        {/* Content Area */}
+        <main className="flex-1 min-w-0">
+          {activeTab === 'material' && (
+            <div className="linear-card p-6 lg:p-8 relative">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-3 text-[#8a8f98]">
+                  <div className="w-6 h-6 border-2 border-[#7170ff] border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-xs font-mono">Memuat materi markdown...</span>
                 </div>
-              )}
-
-              {/* VIEW 2: FLASHCARDS */}
-              {activeView === 'flashcards' && (
-                <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 md:p-8 shadow-sm space-y-6 text-center">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>Flashcard {currentCardIndex + 1} dari {currentFlashcards.length}</span>
-                    <span className="bg-indigo-900/60 text-indigo-300 border border-indigo-700 px-2.5 py-0.5 rounded-full font-medium">
-                      {currentFlashcards[currentCardIndex]?.category}
-                    </span>
-                  </div>
-
-                  <div
-                    onClick={() => setIsFlipped(!isFlipped)}
-                    className="min-h-[240px] bg-slate-900 border border-slate-700 hover:border-indigo-500/50 cursor-pointer rounded-2xl p-8 flex flex-col justify-center items-center transition-all duration-300 shadow-inner group"
+              ) : (
+                <div className="custom-prose max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
                   >
-                    <span className="text-xs text-slate-500 uppercase tracking-widest mb-3">
-                      {isFlipped ? "JAWABAN / PENJELASAN" : "PERTANYAAN / KONSEP"}
-                    </span>
-                    <h3 className="text-xl md:text-2xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
-                      {isFlipped ? currentFlashcards[currentCardIndex]?.back : currentFlashcards[currentCardIndex]?.front}
-                    </h3>
-                    <span className="text-xs text-indigo-400/80 mt-6 flex items-center gap-1">
-                      Klik untuk me-balik kartu
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-center space-x-4 pt-2">
-                    <button
-                      disabled={currentCardIndex === 0}
-                      onClick={() => { setCurrentCardIndex(prev => prev - 1); setIsFlipped(false); }}
-                      className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 rounded-lg text-sm font-medium"
-                    >
-                      Sebelumnya
-                    </button>
-                    <button
-                      disabled={currentCardIndex === currentFlashcards.length - 1}
-                      onClick={() => { setCurrentCardIndex(prev => prev + 1); setIsFlipped(false); }}
-                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 rounded-lg text-sm font-medium"
-                    >
-                      Selanjutnya
-                    </button>
-                  </div>
+                    {markdownContent}
+                  </ReactMarkdown>
                 </div>
               )}
+            </div>
+          )}
 
-              {/* VIEW 3: QUIZ */}
-              {activeView === 'quiz' && (
-                <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 md:p-8 shadow-sm space-y-8">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-100">Evaluasi Pemahaman Interaktif</h2>
-                    <p className="text-sm text-slate-400">Uji daya ingat dan pemahaman logis materi {activeTab === 'sesi1' ? 'Sesi 01' : 'Sesi 02'}.</p>
-                  </div>
+          {activeTab === 'flashcards' && (
+            <div className="linear-card p-6 lg:p-8 flex flex-col items-center justify-center min-h-[450px]">
+              <div className="w-full max-w-md space-y-6 text-center">
+                <div className="flex items-center justify-between text-xs text-[#8a8f98]">
+                  <span>Kartu {currentCardIndex + 1} dari {flashcardsData.length}</span>
+                  <span className="font-mono text-[#828fff]">{activeSesi.tag}</span>
+                </div>
 
-                  {showQuizResults && (
-                    <div className="bg-indigo-950/60 border border-indigo-700/60 rounded-xl p-6 text-center space-y-2">
-                      <Award className="mx-auto text-indigo-400" size={40} />
-                      <h3 className="text-2xl font-extrabold text-indigo-200">Skor Akhir: {calculateScore()}%</h3>
-                      <p className="text-xs text-indigo-300">
-                        {calculateScore() >= 80 ? 'Sangat Bagus! Anda memahami materi sesi ini secara mendalam.' : 'Tetap Semangat! Pelajari kembali materi pada tab Modul Bacaan Utuh.'}
-                      </p>
+                {/* Card Container */}
+                <div
+                  onClick={() => setIsFlipped(!isFlipped)}
+                  className="w-full h-64 bg-[#0f1011] border border-white/[0.1] hover:border-[#7170ff]/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 transform hover:scale-[1.01] shadow-2xl relative"
+                >
+                  <span className="absolute top-4 right-4 text-[10px] uppercase font-mono text-[#62666d] bg-white/[0.04] px-2 py-0.5 rounded">
+                    {isFlipped ? 'Jawaban' : 'Pertanyaan'}
+                  </span>
+                  
+                  <p className={`text-base lg:text-lg font-medium transition-all ${isFlipped ? 'text-[#828fff]' : 'text-[#f7f8f8]'}`}>
+                    {isFlipped ? flashcardsData[currentCardIndex].a : flashcardsData[currentCardIndex].q}
+                  </p>
+
+                  <span className="absolute bottom-4 text-xs text-[#62666d]">
+                    Klik untuk melihat {isFlipped ? 'pertanyaan' : 'jawaban'}
+                  </span>
+                </div>
+
+                {/* Controls */}
+                <div className="flex items-center justify-center gap-4">
+                  <button
+                    disabled={currentCardIndex === 0}
+                    onClick={() => {
+                      setCurrentCardIndex(prev => prev - 1);
+                      setIsFlipped(false);
+                    }}
+                    className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/[0.08]"
+                  >
+                    ← Sebelumnya
+                  </button>
+                  <button
+                    disabled={currentCardIndex === flashcardsData.length - 1}
+                    onClick={() => {
+                      setCurrentCardIndex(prev => prev + 1);
+                      setIsFlipped(false);
+                    }}
+                    className="px-4 py-2 rounded-lg bg-[#5e6ad2] text-white text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7170ff]"
+                  >
+                    Selanjutnya →
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'quiz' && (
+            <div className="linear-card p-6 lg:p-8 space-y-8">
+              <div>
+                <h2 className="text-xl font-bold text-[#f7f8f8] mb-1">Evaluasi Pemahaman - {activeSesi.title}</h2>
+                <p className="text-xs text-[#8a8f98]">Jawab seluruh pertanyaan berikut untuk menguji pemahaman konsep.</p>
+              </div>
+
+              <div className="space-y-6">
+                {quizData.map((q, qIdx) => (
+                  <div key={qIdx} className="p-5 rounded-xl bg-[#0f1011] border border-white/[0.06] space-y-4">
+                    <h3 className="text-sm font-semibold text-[#f7f8f8] flex gap-2">
+                      <span className="text-[#7170ff] font-mono">{qIdx + 1}.</span> {q.question}
+                    </h3>
+
+                    <div className="space-y-2">
+                      {q.options.map((opt, optIdx) => {
+                        const isSelected = quizAnswers[qIdx] === optIdx;
+                        const isCorrect = q.correct === optIdx;
+                        let optionStyle = "bg-white/[0.02] border-white/[0.06] text-[#d0d6e0] hover:bg-white/[0.05]";
+
+                        if (submittedQuiz) {
+                          if (isCorrect) {
+                            optionStyle = "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-medium";
+                          } else if (isSelected) {
+                            optionStyle = "bg-rose-500/15 border-rose-500/40 text-rose-300";
+                          }
+                        } else if (isSelected) {
+                          optionStyle = "bg-[#5e6ad2]/20 border-[#7170ff] text-white font-medium";
+                        }
+
+                        return (
+                          <button
+                            key={optIdx}
+                            onClick={() => handleQuizOptionSelect(qIdx, optIdx)}
+                            className={`w-full text-left p-3 rounded-lg border text-xs transition-all flex items-center justify-between ${optionStyle}`}
+                          >
+                            <span>{opt}</span>
+                            {submittedQuiz && isCorrect && <span className="text-xs">✓ Benar</span>}
+                            {submittedQuiz && isSelected && !isCorrect && <span className="text-xs">✗ Salah</span>}
+                          </button>
+                        );
+                      })}
                     </div>
-                  )}
 
-                  <div className="space-y-6">
-                    {currentQuiz.map((q, qIdx) => (
-                      <div key={q.id} className="bg-slate-900/80 border border-slate-700/80 rounded-xl p-5 space-y-4">
-                        <div className="font-semibold text-slate-200 text-base">
-                          {qIdx + 1}. {q.question}
-                        </div>
-                        <div className="space-y-2">
-                          {q.options.map((opt, optIdx) => {
-                            const isSelected = quizAnswers[q.id] === optIdx;
-                            const isCorrect = q.answer === optIdx;
-                            let btnStyle = "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700/80";
-                            
-                            if (showQuizResults) {
-                              if (isCorrect) btnStyle = "bg-emerald-950/80 border-emerald-600 text-emerald-200";
-                              else if (isSelected && !isCorrect) btnStyle = "bg-rose-950/80 border-rose-600 text-rose-200";
-                            } else if (isSelected) {
-                              btnStyle = "bg-indigo-600/30 border-indigo-500 text-indigo-200 font-medium";
-                            }
-
-                            return (
-                              <button
-                                key={optIdx}
-                                onClick={() => handleQuizSelect(q.id, optIdx)}
-                                className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-all flex items-start space-x-3 ${btnStyle}`}
-                              >
-                                <span className="font-mono text-xs opacity-60 mt-0.5">{String.fromCharCode(65 + optIdx)}.</span>
-                                <span className="flex-1">{opt}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                        {showQuizResults && (
-                          <div className="bg-slate-800 p-3 rounded-lg border border-slate-700 text-xs text-slate-300 space-y-1">
-                            <span className="font-bold text-indigo-400">Pembahasan: </span>
-                            {q.explanation}
-                          </div>
-                        )}
+                    {submittedQuiz && (
+                      <div className="p-3 rounded-lg bg-[#5e6ad2]/10 border border-[#5e6ad2]/20 text-xs text-[#d0d6e0] space-y-1">
+                        <span className="font-semibold text-[#828fff]">Penjelasan:</span>
+                        <p>{q.explanation}</p>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-end space-x-4">
-                    {showQuizResults ? (
-                      <button
-                        onClick={() => { setQuizAnswers({}); setShowQuizResults(false); }}
-                        className="px-6 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-medium"
-                      >
-                        Ulangi Kuis
-                      </button>
-                    ) : (
-                      <button
-                        disabled={Object.keys(quizAnswers).length < currentQuiz.length}
-                        onClick={() => setShowQuizResults(true)}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 rounded-lg text-sm font-medium shadow-md"
-                      >
-                        Submit & Lihat Hasil
-                      </button>
                     )}
                   </div>
-                </div>
-              )}
-            </>
+                ))}
+              </div>
+
+              {/* Quiz Submit Bar */}
+              <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
+                {submittedQuiz ? (
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-semibold text-white">
+                      Skor Akhir: <span className="text-[#828fff] font-mono">{calculateQuizScore()} / {quizData.length}</span>
+                    </span>
+                    <button
+                      onClick={() => {
+                        setSubmittedQuiz(false);
+                        setQuizAnswers({});
+                      }}
+                      className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white"
+                    >
+                      Ulangi Kuis
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    disabled={Object.keys(quizAnswers).length < quizData.length}
+                    onClick={() => setSubmittedQuiz(true)}
+                    className="ml-auto px-6 py-2.5 rounded-lg bg-[#5e6ad2] hover:bg-[#7170ff] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-[#5e6ad2]/20"
+                  >
+                    Kirim Jawaban
+                  </button>
+                )}
+              </div>
+            </div>
           )}
         </main>
       </div>
