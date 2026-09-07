@@ -41,6 +41,7 @@ export default function App() {
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [toc, setToc] = useState<TocItem[]>([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   // Flashcards state
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
@@ -158,30 +159,40 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0c0e] text-[#e2e8f0] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0b0c0e] text-[#e2e8f0] flex flex-col font-sans overflow-x-hidden">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 bg-[#0d0e11]/90 backdrop-blur-md border-b border-white/[0.08] px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20">
-            ADA
+      <header className="sticky top-0 z-50 bg-[#0d0e11]/95 backdrop-blur-md border-b border-white/[0.08] px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20 shrink-0">
+              ADA
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm font-semibold text-slate-100 truncate">COMP6049 • ADA Study Module</span>
+              <span className="text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded self-start sm:self-auto">BINUS</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-slate-100">COMP6049 • Algorithm Design & Analysis</span>
-            <span className="text-[11px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded">BINUS University</span>
-          </div>
+
+          {/* Mobile Drawer Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="sm:hidden px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.1] text-xs font-mono text-slate-300"
+          >
+            {mobileMenuOpen ? '✕ Close' : '☰ Menu'}
+          </button>
         </div>
 
         {/* Action Toggle Switch */}
-        <div className="flex items-center bg-[#15171c] p-1 rounded-lg border border-white/[0.08]">
+        <div className="flex items-center justify-center bg-[#15171c] p-1 rounded-lg border border-white/[0.08] w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('reading')}
-            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+            className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
               activeTab === 'reading'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            📖 Reading Lane
+            📖 Reading
           </button>
           <button
             onClick={() => {
@@ -189,7 +200,7 @@ export default function App() {
               setCurrentCardIndex(0);
               setIsFlipped(false);
             }}
-            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+            className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
               activeTab === 'flashcards'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
@@ -203,20 +214,66 @@ export default function App() {
               setSubmittedQuiz(false);
               setQuizAnswers({});
             }}
-            className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+            className={`flex-1 sm:flex-initial px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
               activeTab === 'quiz'
                 ? 'bg-blue-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            🧠 Quiz Engine
+            🧠 Quiz
           </button>
         </div>
       </header>
 
+      {/* Mobile Drawer Bar */}
+      {mobileMenuOpen && (
+        <div className="sm:hidden bg-[#12141a] border-b border-white/[0.1] px-4 py-4 space-y-4">
+          <div>
+            <h3 className="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-2">Pilih Modul Sesi</h3>
+            <div className="grid grid-cols-1 gap-2">
+              {SESI_LIST.map(sesi => (
+                <button
+                  key={sesi.id}
+                  onClick={() => {
+                    setCurrentSesiId(sesi.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`text-left px-3 py-2 rounded-lg text-xs font-medium flex items-center justify-between border ${
+                    currentSesiId === sesi.id
+                      ? 'bg-blue-600/20 text-blue-300 border-blue-500/40'
+                      : 'bg-white/[0.02] border-white/[0.05] text-slate-400'
+                  }`}
+                >
+                  <span>{sesi.title}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.05]">{sesi.tag}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {activeTab === 'reading' && toc.length > 0 && (
+            <div>
+              <h3 className="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-2">Jump to Section</h3>
+              <div className="flex flex-wrap gap-1.5">
+                {toc.map((item, idx) => (
+                  <a
+                    key={idx}
+                    href={`#${item.id}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-[11px] bg-white/[0.04] border border-white/[0.08] text-slate-300 px-2 py-1 rounded hover:border-blue-500/50"
+                  >
+                    {item.text}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 3-Column Mintlify Documentation Body */}
       <div className="flex-1 flex max-w-[1440px] w-full mx-auto">
-        {/* Left Column: Module Directory Navigation */}
+        {/* Left Column: Module Directory Navigation (Desktop) */}
         <aside className="w-64 border-r border-white/[0.08] p-5 shrink-0 hidden lg:flex flex-col gap-6 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
           <div>
             <h2 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-3">Daftar Modul</h2>
@@ -247,7 +304,7 @@ export default function App() {
         </aside>
 
         {/* Center Column: Reading Lane / Main Content */}
-        <main className="flex-1 min-w-0 p-6 lg:px-12 lg:py-8 max-w-4xl mx-auto">
+        <main className="flex-1 min-w-0 px-4 sm:px-8 py-6 max-w-4xl mx-auto w-full">
           {activeTab === 'reading' && (
             <div>
               {loading ? (
@@ -279,7 +336,7 @@ export default function App() {
           )}
 
           {activeTab === 'flashcards' && (
-            <div className="flex flex-col items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-6 sm:py-12">
               <div className="w-full max-w-lg space-y-6">
                 <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
                   <span>Kartu {currentCardIndex + 1} / {flashcardsData.length}</span>
@@ -288,17 +345,17 @@ export default function App() {
 
                 <div
                   onClick={() => setIsFlipped(!isFlipped)}
-                  className="w-full min-h-[260px] bg-[#12141a] border border-white/[0.1] hover:border-blue-500/40 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 text-center shadow-xl relative"
+                  className="w-full min-h-[240px] bg-[#12141a] border border-white/[0.1] hover:border-blue-500/40 rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 text-center shadow-xl relative"
                 >
-                  <span className="absolute top-4 right-4 text-[10px] uppercase font-mono text-slate-500 bg-white/[0.05] px-2 py-0.5 rounded">
+                  <span className="absolute top-3 right-3 text-[10px] uppercase font-mono text-slate-500 bg-white/[0.05] px-2 py-0.5 rounded">
                     {isFlipped ? 'Jawaban' : 'Pertanyaan'}
                   </span>
                   
-                  <p className={`text-base lg:text-lg font-medium ${isFlipped ? 'text-blue-300' : 'text-slate-100'}`}>
+                  <p className={`text-sm sm:text-base font-medium leading-relaxed ${isFlipped ? 'text-blue-300' : 'text-slate-100'}`}>
                     {isFlipped ? flashcardsData[currentCardIndex].a : flashcardsData[currentCardIndex].q}
                   </p>
 
-                  <span className="absolute bottom-4 text-xs text-slate-500">
+                  <span className="absolute bottom-3 text-[11px] text-slate-500">
                     Klik untuk membalik kartu
                   </span>
                 </div>
@@ -330,16 +387,16 @@ export default function App() {
           )}
 
           {activeTab === 'quiz' && (
-            <div className="space-y-6 max-w-2xl mx-auto py-4">
+            <div className="space-y-6 max-w-2xl mx-auto py-2 sm:py-4">
               <div>
-                <h2 className="text-xl font-bold text-slate-100 mb-1">Evaluasi Pemahaman - {activeSesi.title}</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-100 mb-1">Evaluasi Pemahaman - {activeSesi.title}</h2>
                 <p className="text-xs text-slate-400">Jawab seluruh pertanyaan berikut untuk menguji pemahaman konsep.</p>
               </div>
 
               <div className="space-y-5">
                 {quizData.map((q, qIdx) => (
-                  <div key={qIdx} className="p-5 rounded-xl bg-[#12141a] border border-white/[0.08] space-y-4">
-                    <h3 className="text-sm font-medium text-slate-200 flex gap-2">
+                  <div key={qIdx} className="p-4 sm:p-5 rounded-xl bg-[#12141a] border border-white/[0.08] space-y-4">
+                    <h3 className="text-xs sm:text-sm font-medium text-slate-200 flex gap-2">
                       <span className="text-blue-400 font-mono">{qIdx + 1}.</span> {q.question}
                     </h3>
 
@@ -386,15 +443,15 @@ export default function App() {
               <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
                 {submittedQuiz ? (
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-semibold text-white">
-                      Skor Akhir: <span className="text-blue-400 font-mono">{calculateQuizScore()} / {quizData.length}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-white">
+                      Skor: <span className="text-blue-400 font-mono">{calculateQuizScore()} / {quizData.length}</span>
                     </span>
                     <button
                       onClick={() => {
                         setSubmittedQuiz(false);
                         setQuizAnswers({});
                       }}
-                      className="px-4 py-2 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white"
+                      className="px-3.5 py-1.5 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white"
                     >
                       Ulangi Kuis
                     </button>
@@ -403,7 +460,7 @@ export default function App() {
                   <button
                     disabled={Object.keys(quizAnswers).length < quizData.length}
                     onClick={() => setSubmittedQuiz(true)}
-                    className="ml-auto px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
+                    className="ml-auto px-5 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
                   >
                     Kirim Jawaban
                   </button>
@@ -413,7 +470,7 @@ export default function App() {
           )}
         </main>
 
-        {/* Right Column: On-Page Table of Contents */}
+        {/* Right Column: On-Page Table of Contents (Desktop) */}
         {activeTab === 'reading' && (
           <aside className="w-60 border-l border-white/[0.08] p-5 shrink-0 hidden xl:block sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
             <h2 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-3">On This Page</h2>
