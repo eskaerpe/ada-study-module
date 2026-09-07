@@ -224,12 +224,43 @@
   line-height: 1.6;
 }
 
-/* KaTeX Math Styling */
+/* KaTeX Math Styling & Overlap Fixes */
 .katex-display {
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(59, 130, 246, 0.2);
   padding: 1rem 1.25rem;
   border-radius: 10px;
   margin: 1.5rem 0 !important;
+  max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  font-size: 0.95em;
+  line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+  .katex-display {
+    font-size: 0.85em;
+    padding: 0.75rem 1rem;
+    margin: 1rem 0 !important;
+  }
+}
+
+.katex {
+  font-size: 0.98em;
+  line-height: 1.2;
+  text-indent: 0;
+}
+
+/* Prevent inline math fractions/scripts from colliding with line-height */
+.doc-prose .katex-html {
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+  padding: 2px 0;
+}
+
+.doc-prose p {
+  line-height: 1.85;
 }
