@@ -6,222 +6,214 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
   }
 
   body {
-    background-color: #08090a;
-    color: #f7f8f8;
+    background-color: #0b0c0e;
+    color: #e2e8f0;
     font-family: var(--font-sans);
-    font-feature-settings: "cv01", "ss03";
     -webkit-font-smoothing: antialiased;
   }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #08090a;
+  background: #0b0c0e;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
 
-/* Glassmorphism & Card Styles */
-.linear-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.linear-card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.linear-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Reading lane & Custom Callouts */
+.callout-intuition {
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-left: 4px solid #3b82f6;
   border-radius: 8px;
-  color: #f7f8f8;
-  transition: all 0.15s ease;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
 }
 
-.linear-input:focus {
-  outline: none;
-  border-color: #7170ff;
-  box-shadow: 0 0 0 2px rgba(113, 112, 255, 0.2);
+.callout-example {
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-left: 4px solid #10b981;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
 }
 
-/* Markdown Custom Prose Override */
-.custom-prose {
-  color: #d0d6e0;
-  font-size: 0.98rem;
-  line-height: 1.7;
+.callout-warning {
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
 }
 
-.custom-prose h1 {
-  color: #f7f8f8;
-  font-size: 2.1rem;
-  font-weight: 600;
+/* Prose Typography styling for Mintlify feel */
+.doc-prose {
+  color: #cbd5e1;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.doc-prose h1 {
+  color: #f8fafc;
+  font-size: 2.25rem;
+  font-weight: 700;
   letter-spacing: -0.025em;
-  margin-top: 1.5rem;
-  margin-bottom: 1.25rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.custom-prose h2 {
-  color: #828fff;
-  font-size: 1.45rem;
+.doc-prose h2 {
+  color: #f8fafc;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-top: 0.5rem;
+  scroll-margin-top: 5rem;
+}
+
+.doc-prose h3 {
+  color: #93c5fd;
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: -0.015em;
-  margin-top: 2.25rem;
-  margin-bottom: 1rem;
-  display: flex;
-  items-center;
-  gap: 0.5rem;
-}
-
-.custom-prose h3 {
-  color: #f7f8f8;
-  font-size: 1.15rem;
-  font-weight: 590;
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   margin-bottom: 0.75rem;
+  scroll-margin-top: 5rem;
 }
 
-.custom-prose p {
-  margin-bottom: 1.1rem;
+.doc-prose p {
+  margin-bottom: 1.25rem;
 }
 
-.custom-prose strong {
-  color: #f7f8f8;
-  font-weight: 590;
+.doc-prose strong {
+  color: #f8fafc;
+  font-weight: 600;
 }
 
-.custom-prose ul {
+.doc-prose ul {
   list-style-type: none;
   padding-left: 0;
   margin-bottom: 1.25rem;
 }
 
-.custom-prose ul > li {
+.doc-prose ul > li {
   position: relative;
   padding-left: 1.5rem;
   margin-bottom: 0.5rem;
 }
 
-.custom-prose ul > li::before {
+.doc-prose ul > li::before {
   content: "•";
   position: absolute;
-  left: 0.35rem;
-  color: #7170ff;
+  left: 0.4rem;
+  color: #60a5fa;
   font-weight: bold;
-  font-size: 1.2rem;
-  line-height: 1;
+  font-size: 1.1rem;
 }
 
-.custom-prose ol {
-  counter-reset: custom-counter;
+.doc-prose ol {
+  counter-reset: doc-counter;
   list-style-type: none;
   padding-left: 0;
   margin-bottom: 1.25rem;
 }
 
-.custom-prose ol > li {
-  counter-increment: custom-counter;
+.doc-prose ol > li {
+  counter-increment: doc-counter;
   position: relative;
-  padding-left: 2rem;
-  margin-bottom: 0.6rem;
+  padding-left: 2.25rem;
+  margin-bottom: 0.75rem;
 }
 
-.custom-prose ol > li::before {
-  content: counter(custom-counter);
+.doc-prose ol > li::before {
+  content: counter(doc-counter);
   position: absolute;
   left: 0;
-  top: 0.15rem;
-  width: 1.35rem;
-  height: 1.35rem;
-  background: rgba(113, 112, 255, 0.15);
-  border: 1px solid rgba(113, 112, 255, 0.3);
-  color: #828fff;
+  top: 0.2rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
   border-radius: 9999px;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.custom-prose blockquote {
-  border-left: 3px solid #5e6ad2;
-  background: rgba(94, 106, 210, 0.06);
+.doc-prose blockquote {
+  border-left: 3px solid #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
   padding: 1rem 1.25rem;
   border-radius: 0 8px 8px 0;
   margin: 1.5rem 0;
-  color: #d0d6e0;
-  font-style: normal;
+  color: #e2e8f0;
 }
 
-.custom-prose table {
+.doc-prose table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  margin: 1.5rem 0;
+  margin: 1.75rem 0;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.custom-prose th {
+.doc-prose th {
   background: rgba(255, 255, 255, 0.04);
-  color: #f7f8f8;
-  font-weight: 590;
+  color: #f8fafc;
+  font-weight: 600;
   text-align: left;
   padding: 0.75rem 1rem;
   font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.custom-prose td {
+.doc-prose td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   font-size: 0.9rem;
 }
 
-.custom-prose tr:last-child td {
+.doc-prose tr:last-child td {
   border-bottom: none;
 }
 
-.custom-prose tr:hover td {
+.doc-prose tr:hover td {
   background: rgba(255, 255, 255, 0.02);
 }
 
-.custom-prose code:not(pre code) {
-  background: rgba(255, 255, 255, 0.06);
+.doc-prose code:not(pre code) {
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #828fff;
+  color: #93c5fd;
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-family: var(--font-mono);
   font-size: 0.86em;
 }
 
-.custom-prose pre {
-  background: #0d0e10;
+.doc-prose pre {
+  background: #050607;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 1.25rem;
@@ -234,10 +226,10 @@
 
 /* KaTeX Math Styling */
 .katex-display {
-  background: rgba(15, 16, 17, 0.8);
-  border: 1px solid rgba(113, 112, 255, 0.2);
-  padding: 1rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  padding: 1rem 1.25rem;
   border-radius: 10px;
-  margin: 1.25rem 0 !important;
+  margin: 1.5rem 0 !important;
   overflow-x: auto;
 }

@@ -9,8 +9,13 @@ interface ModuleSesi {
   title: string;
   subtitle: string;
   file: string;
-  duration: string;
   tag: string;
+}
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
 }
 
 const SESI_LIST: ModuleSesi[] = [
@@ -19,24 +24,23 @@ const SESI_LIST: ModuleSesi[] = [
     title: 'Sesi 01: Algoritma & Kompleksitas',
     subtitle: 'Role of Algorithms, Correctness, Pseudocode & Complexity',
     file: '/ada-study-module/content/sesi1.md',
-    duration: '2 Jam Belajar',
-    tag: 'Dasar Algoritma'
+    tag: 'Sesi 1'
   },
   {
     id: 'sesi2',
     title: 'Sesi 02: Analisis Matematis & Rekursi',
     subtitle: 'Induksi Matematika, Deret Summations & Recurrence',
     file: '/ada-study-module/content/sesi2.md',
-    duration: '2.5 Jam Belajar',
-    tag: 'Math & Rekursi'
+    tag: 'Sesi 2'
   }
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'material' | 'flashcards' | 'quiz'>('material');
+  const [activeTab, setActiveTab] = useState<'reading' | 'flashcards' | 'quiz'>('reading');
   const [currentSesiId, setCurrentSesiId] = useState<string>('sesi1');
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [toc, setToc] = useState<TocItem[]>([]);
 
   // Flashcards state
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
@@ -54,6 +58,22 @@ export default function App() {
       .then(res => res.text())
       .then(text => {
         setMarkdownContent(text);
+        
+        // Generate TOC from headings
+        const headings: TocItem[] = [];
+        const lines = text.split('\n');
+        lines.forEach((line) => {
+          if (line.startsWith('## ')) {
+            const headingText = line.replace('## ', '').trim();
+            const id = headingText.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+            headings.push({ id, text: headingText, level: 2 });
+          } else if (line.startsWith('### ')) {
+            const headingText = line.replace('### ', '').trim();
+            const id = headingText.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+            headings.push({ id, text: headingText, level: 3 });
+          }
+        });
+        setToc(headings);
         setLoading(false);
       })
       .catch(err => {
@@ -63,7 +83,6 @@ export default function App() {
       });
   }, [currentSesiId]);
 
-  // Sample Flashcards & Quiz Data based on Session
   const flashcardsData = currentSesiId === 'sesi1' ? [
     { q: "Apa definisi Algoritma menurut Sesi 1?", a: "Prosedur komputasi terspesifikasi yang mengambil input dan menghasilkan output yang tepat." },
     { q: "Apa bedanya Loop Invariant dengan Induksi Matematika?", a: "Loop Invariant membuktikan kebenaran algoritma iteratif pada tiap iterasi, Induksi untuk membuktikan rumus/rekursi." },
@@ -139,35 +158,30 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090a] text-[#f7f8f8] flex flex-col font-sans selection:bg-[#5e6ad2] selection:text-white">
-      {/* Top Header Navigation */}
-      <header className="sticky top-0 z-50 bg-[#0f1011]/80 backdrop-blur-md border-b border-white/[0.08] px-4 lg:px-8 py-3.5 flex items-center justify-between">
+    <div className="min-h-screen bg-[#0b0c0e] text-[#e2e8f0] flex flex-col font-sans">
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-50 bg-[#0d0e11]/90 backdrop-blur-md border-b border-white/[0.08] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#5e6ad2] to-[#828fff] flex items-center justify-center font-bold text-white shadow-lg shadow-[#5e6ad2]/20">
-            A
+          <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center font-bold text-white text-xs shadow-md shadow-blue-500/20">
+            ADA
           </div>
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight text-[#f7f8f8] flex items-center gap-2">
-              ADA Study Module
-              <span className="text-[10px] font-mono bg-[#7170ff]/15 text-[#828fff] px-2 py-0.5 rounded-full border border-[#7170ff]/30">
-                COMP6049
-              </span>
-            </h1>
-            <p className="text-xs text-[#8a8f98]">Algorithm Design & Analysis • BINUS</p>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-slate-100">COMP6049 • Algorithm Design & Analysis</span>
+            <span className="text-[11px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded">BINUS University</span>
           </div>
         </div>
 
-        {/* Action Tabs */}
-        <div className="flex items-center gap-1 bg-[#191a1b] p-1 rounded-lg border border-white/[0.06]">
+        {/* Action Toggle Switch */}
+        <div className="flex items-center bg-[#15171c] p-1 rounded-lg border border-white/[0.08]">
           <button
-            onClick={() => setActiveTab('material')}
+            onClick={() => setActiveTab('reading')}
             className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
-              activeTab === 'material'
-                ? 'bg-[#5e6ad2] text-white shadow-sm'
-                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+              activeTab === 'reading'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            📖 Materi Lecture
+            📖 Reading Lane
           </button>
           <button
             onClick={() => {
@@ -177,8 +191,8 @@ export default function App() {
             }}
             className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
               activeTab === 'flashcards'
-                ? 'bg-[#5e6ad2] text-white shadow-sm'
-                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             🎴 Flashcards
@@ -191,111 +205,112 @@ export default function App() {
             }}
             className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all ${
               activeTab === 'quiz'
-                ? 'bg-[#5e6ad2] text-white shadow-sm'
-                : 'text-[#8a8f98] hover:text-[#f7f8f8] hover:bg-white/[0.03]'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            🧠 Interactive Quiz
+            🧠 Quiz Engine
           </button>
         </div>
       </header>
 
-      {/* Main Container */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 lg:px-6 py-6 gap-6">
-        {/* Sidebar Session Selector */}
-        <aside className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
-          <div className="linear-card p-4">
-            <h2 className="text-xs font-mono uppercase tracking-wider text-[#8a8f98] mb-3">
-              Daftar Modul Sesi
-            </h2>
-            <div className="flex flex-col gap-2">
+      {/* 3-Column Mintlify Documentation Body */}
+      <div className="flex-1 flex max-w-[1440px] w-full mx-auto">
+        {/* Left Column: Module Directory Navigation */}
+        <aside className="w-64 border-r border-white/[0.08] p-5 shrink-0 hidden lg:flex flex-col gap-6 sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
+          <div>
+            <h2 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-3">Daftar Modul</h2>
+            <div className="space-y-1">
               {SESI_LIST.map(sesi => (
                 <button
                   key={sesi.id}
                   onClick={() => setCurrentSesiId(sesi.id)}
-                  className={`text-left p-3 rounded-lg border transition-all flex flex-col gap-1 ${
+                  className={`w-full text-left px-3 py-2.5 rounded-lg text-xs font-medium transition-all flex items-center justify-between ${
                     currentSesiId === sesi.id
-                      ? 'bg-[#5e6ad2]/15 border-[#7170ff]/40 text-white shadow-inner'
-                      : 'bg-white/[0.01] border-white/[0.05] text-[#8a8f98] hover:bg-white/[0.03] hover:text-[#f7f8f8]'
+                      ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30'
+                      : 'text-slate-400 hover:bg-white/[0.03] hover:text-slate-200'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-[#828fff]">{sesi.tag}</span>
-                    <span className="text-[10px] text-[#62666d]">{sesi.duration}</span>
-                  </div>
-                  <h3 className="text-sm font-medium text-[#f7f8f8] leading-snug">{sesi.title}</h3>
-                  <p className="text-xs text-[#8a8f98] line-clamp-1">{sesi.subtitle}</p>
+                  <span className="truncate">{sesi.title}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.05] text-slate-400">{sesi.tag}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Quick Info Box */}
-          <div className="linear-card p-4 space-y-2">
-            <h3 className="text-xs font-mono uppercase tracking-wider text-[#8a8f98]">💡 Pedoman Studi</h3>
-            <p className="text-xs text-[#8a8f98] leading-relaxed">
-              Modul ini disusun dengan pendekatan intuisi formal, pembuktian matematis, trace call-stack, serta kuis interaktif.
+          <div className="mt-auto p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] text-xs text-slate-400 space-y-1">
+            <span className="font-semibold text-slate-300">Format Pembelajaran</span>
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Materi disusun dengan Intuition, Formal Proof, Worked Examples, dan Trace Call Stack.
             </p>
           </div>
         </aside>
 
-        {/* Content Area */}
-        <main className="flex-1 min-w-0">
-          {activeTab === 'material' && (
-            <div className="linear-card p-6 lg:p-8 relative">
+        {/* Center Column: Reading Lane / Main Content */}
+        <main className="flex-1 min-w-0 p-6 lg:px-12 lg:py-8 max-w-4xl mx-auto">
+          {activeTab === 'reading' && (
+            <div>
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-3 text-[#8a8f98]">
-                  <div className="w-6 h-6 border-2 border-[#7170ff] border-t-transparent rounded-full animate-spin"></div>
+                <div className="flex flex-col items-center justify-center py-24 gap-3 text-slate-500">
+                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                   <span className="text-xs font-mono">Memuat materi markdown...</span>
                 </div>
               ) : (
-                <div className="custom-prose max-w-none">
+                <article className="doc-prose">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm, remarkMath]}
                     rehypePlugins={[rehypeKatex]}
+                    components={{
+                      h2: ({ node, ...props }) => {
+                        const id = String(props.children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+                        return <h2 id={id} {...props} />;
+                      },
+                      h3: ({ node, ...props }) => {
+                        const id = String(props.children).toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+                        return <h3 id={id} {...props} />;
+                      }
+                    }}
                   >
                     {markdownContent}
                   </ReactMarkdown>
-                </div>
+                </article>
               )}
             </div>
           )}
 
           {activeTab === 'flashcards' && (
-            <div className="linear-card p-6 lg:p-8 flex flex-col items-center justify-center min-h-[450px]">
-              <div className="w-full max-w-md space-y-6 text-center">
-                <div className="flex items-center justify-between text-xs text-[#8a8f98]">
-                  <span>Kartu {currentCardIndex + 1} dari {flashcardsData.length}</span>
-                  <span className="font-mono text-[#828fff]">{activeSesi.tag}</span>
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-full max-w-lg space-y-6">
+                <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                  <span>Kartu {currentCardIndex + 1} / {flashcardsData.length}</span>
+                  <span className="text-blue-400">{activeSesi.title}</span>
                 </div>
 
-                {/* Card Container */}
                 <div
                   onClick={() => setIsFlipped(!isFlipped)}
-                  className="w-full h-64 bg-[#0f1011] border border-white/[0.1] hover:border-[#7170ff]/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 transform hover:scale-[1.01] shadow-2xl relative"
+                  className="w-full min-h-[260px] bg-[#12141a] border border-white/[0.1] hover:border-blue-500/40 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 text-center shadow-xl relative"
                 >
-                  <span className="absolute top-4 right-4 text-[10px] uppercase font-mono text-[#62666d] bg-white/[0.04] px-2 py-0.5 rounded">
+                  <span className="absolute top-4 right-4 text-[10px] uppercase font-mono text-slate-500 bg-white/[0.05] px-2 py-0.5 rounded">
                     {isFlipped ? 'Jawaban' : 'Pertanyaan'}
                   </span>
                   
-                  <p className={`text-base lg:text-lg font-medium transition-all ${isFlipped ? 'text-[#828fff]' : 'text-[#f7f8f8]'}`}>
+                  <p className={`text-base lg:text-lg font-medium ${isFlipped ? 'text-blue-300' : 'text-slate-100'}`}>
                     {isFlipped ? flashcardsData[currentCardIndex].a : flashcardsData[currentCardIndex].q}
                   </p>
 
-                  <span className="absolute bottom-4 text-xs text-[#62666d]">
-                    Klik untuk melihat {isFlipped ? 'pertanyaan' : 'jawaban'}
+                  <span className="absolute bottom-4 text-xs text-slate-500">
+                    Klik untuk membalik kartu
                   </span>
                 </div>
 
-                {/* Controls */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-between">
                   <button
                     disabled={currentCardIndex === 0}
                     onClick={() => {
                       setCurrentCardIndex(prev => prev - 1);
                       setIsFlipped(false);
                     }}
-                    className="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/[0.08]"
+                    className="px-4 py-2 rounded-md bg-white/[0.05] border border-white/[0.08] text-xs font-medium text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/[0.08]"
                   >
                     ← Sebelumnya
                   </button>
@@ -305,7 +320,7 @@ export default function App() {
                       setCurrentCardIndex(prev => prev + 1);
                       setIsFlipped(false);
                     }}
-                    className="px-4 py-2 rounded-lg bg-[#5e6ad2] text-white text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#7170ff]"
+                    className="px-4 py-2 rounded-md bg-blue-600 text-white text-xs font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-blue-500"
                   >
                     Selanjutnya →
                   </button>
@@ -315,24 +330,24 @@ export default function App() {
           )}
 
           {activeTab === 'quiz' && (
-            <div className="linear-card p-6 lg:p-8 space-y-8">
+            <div className="space-y-6 max-w-2xl mx-auto py-4">
               <div>
-                <h2 className="text-xl font-bold text-[#f7f8f8] mb-1">Evaluasi Pemahaman - {activeSesi.title}</h2>
-                <p className="text-xs text-[#8a8f98]">Jawab seluruh pertanyaan berikut untuk menguji pemahaman konsep.</p>
+                <h2 className="text-xl font-bold text-slate-100 mb-1">Evaluasi Pemahaman - {activeSesi.title}</h2>
+                <p className="text-xs text-slate-400">Jawab seluruh pertanyaan berikut untuk menguji pemahaman konsep.</p>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {quizData.map((q, qIdx) => (
-                  <div key={qIdx} className="p-5 rounded-xl bg-[#0f1011] border border-white/[0.06] space-y-4">
-                    <h3 className="text-sm font-semibold text-[#f7f8f8] flex gap-2">
-                      <span className="text-[#7170ff] font-mono">{qIdx + 1}.</span> {q.question}
+                  <div key={qIdx} className="p-5 rounded-xl bg-[#12141a] border border-white/[0.08] space-y-4">
+                    <h3 className="text-sm font-medium text-slate-200 flex gap-2">
+                      <span className="text-blue-400 font-mono">{qIdx + 1}.</span> {q.question}
                     </h3>
 
                     <div className="space-y-2">
                       {q.options.map((opt, optIdx) => {
                         const isSelected = quizAnswers[qIdx] === optIdx;
                         const isCorrect = q.correct === optIdx;
-                        let optionStyle = "bg-white/[0.02] border-white/[0.06] text-[#d0d6e0] hover:bg-white/[0.05]";
+                        let optionStyle = "bg-white/[0.02] border-white/[0.06] text-slate-300 hover:bg-white/[0.05]";
 
                         if (submittedQuiz) {
                           if (isCorrect) {
@@ -341,7 +356,7 @@ export default function App() {
                             optionStyle = "bg-rose-500/15 border-rose-500/40 text-rose-300";
                           }
                         } else if (isSelected) {
-                          optionStyle = "bg-[#5e6ad2]/20 border-[#7170ff] text-white font-medium";
+                          optionStyle = "bg-blue-600/20 border-blue-500 text-white font-medium";
                         }
 
                         return (
@@ -359,8 +374,8 @@ export default function App() {
                     </div>
 
                     {submittedQuiz && (
-                      <div className="p-3 rounded-lg bg-[#5e6ad2]/10 border border-[#5e6ad2]/20 text-xs text-[#d0d6e0] space-y-1">
-                        <span className="font-semibold text-[#828fff]">Penjelasan:</span>
+                      <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-slate-300 space-y-1">
+                        <span className="font-semibold text-blue-400">Penjelasan:</span>
                         <p>{q.explanation}</p>
                       </div>
                     )}
@@ -368,19 +383,18 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Quiz Submit Bar */}
               <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
                 {submittedQuiz ? (
                   <div className="flex items-center gap-4">
                     <span className="text-sm font-semibold text-white">
-                      Skor Akhir: <span className="text-[#828fff] font-mono">{calculateQuizScore()} / {quizData.length}</span>
+                      Skor Akhir: <span className="text-blue-400 font-mono">{calculateQuizScore()} / {quizData.length}</span>
                     </span>
                     <button
                       onClick={() => {
                         setSubmittedQuiz(false);
                         setQuizAnswers({});
                       }}
-                      className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white"
+                      className="px-4 py-2 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-white"
                     >
                       Ulangi Kuis
                     </button>
@@ -389,7 +403,7 @@ export default function App() {
                   <button
                     disabled={Object.keys(quizAnswers).length < quizData.length}
                     onClick={() => setSubmittedQuiz(true)}
-                    className="ml-auto px-6 py-2.5 rounded-lg bg-[#5e6ad2] hover:bg-[#7170ff] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-[#5e6ad2]/20"
+                    className="ml-auto px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-blue-500/20"
                   >
                     Kirim Jawaban
                   </button>
@@ -398,6 +412,30 @@ export default function App() {
             </div>
           )}
         </main>
+
+        {/* Right Column: On-Page Table of Contents */}
+        {activeTab === 'reading' && (
+          <aside className="w-60 border-l border-white/[0.08] p-5 shrink-0 hidden xl:block sticky top-[57px] h-[calc(100vh-57px)] overflow-y-auto">
+            <h2 className="text-[11px] font-mono uppercase tracking-wider text-slate-500 mb-3">On This Page</h2>
+            <nav className="space-y-1.5 text-xs">
+              {toc.length > 0 ? (
+                toc.map((item, idx) => (
+                  <a
+                    key={idx}
+                    href={`#${item.id}`}
+                    className={`block truncate transition-colors ${
+                      item.level === 3 ? 'pl-3 text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-blue-400 font-medium'
+                    }`}
+                  >
+                    {item.text}
+                  </a>
+                ))
+              ) : (
+                <span className="text-slate-600 text-[11px]">Tidak ada section.</span>
+              )}
+            </nav>
+          </aside>
+        )}
       </div>
     </div>
   );
